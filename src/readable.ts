@@ -39,7 +39,7 @@ export class MessagePortSource<R> implements ReadableStreamDefaultUnderlyingSour
     switch (message.type) {
       case SenderType.WRITE:
         this._controller.enqueue(message.chunk);
-        this._updateBackpressure(this._controller.desiredSize);
+        // enqueue() will call pull if needed, so no need to update backpressure
         break;
       case SenderType.ABORT:
         this._controller.error(message.reason);
