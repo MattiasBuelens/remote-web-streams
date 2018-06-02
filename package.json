@@ -1,13 +1,13 @@
 {
   "name": "message-channel-stream",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/message-channel-stream.js",
   "scripts": {
     "build": "rollup -c"
   },
   "keywords": [],
-  "author": "",
+  "author": "Mattias Buelens",
   "license": "MIT",
   "dependencies": {
     "tslib": "^1.9.2"
