@@ -2,6 +2,14 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
+    "lib": [
+      "dom",
+      "es5",
+      "es2015.iterable",
+      "es2015.promise"
+    ],
+    "rootDir": "src",
+    "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
     "importHelpers": true
