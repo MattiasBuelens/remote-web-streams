@@ -49,6 +49,7 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
       type: SenderType.CLOSE
     };
     this._port.postMessage(message);
+    this._port.close();
   }
 
   abort(reason: any) {
@@ -57,6 +58,7 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
       reason
     };
     this._port.postMessage(message);
+    this._port.close();
   }
 
   private _onMessage(message: ReceiverMessage) {
@@ -73,6 +75,7 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
   private _onError(reason: any) {
     this._controller.error(reason);
     this._rejectReady(reason);
+    this._port.close();
   }
 
   private _updateBackpressure(backpressure: boolean) {

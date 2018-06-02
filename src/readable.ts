@@ -32,6 +32,7 @@ export class MessagePortSource<R> implements ReadableStreamDefaultUnderlyingSour
       reason
     };
     this._port.postMessage(message);
+    this._port.close();
   }
 
   private _onMessage(message: SenderMessage) {
@@ -42,9 +43,11 @@ export class MessagePortSource<R> implements ReadableStreamDefaultUnderlyingSour
         break;
       case SenderType.ABORT:
         this._controller.error(message.reason);
+        this._port.close();
         break;
       case SenderType.CLOSE:
         this._controller.close();
+        this._port.close();
         break;
     }
   }
