@@ -1,0 +1,21 @@
+importScripts('../dist/channel-stream.js');
+const { fromWritablePort } = ChannelStream;
+
+onmessage = async (event) => {
+  const writable = fromWritablePort(event.data);
+  const writer = writable.getWriter();
+
+  try {
+    const chunks = ['a', 'b', 'c', 'd', 'e'];
+    for (let chunk of chunks) {
+      console.log('writer ready');
+      await writer.ready;
+      console.log('writer write:', chunk);
+      writer.write(chunk).catch(() => {});
+    }
+    console.log('writer close');
+    await writer.close();
+  } catch (e) {
+    console.error('writer error:', e);
+  }
+};
