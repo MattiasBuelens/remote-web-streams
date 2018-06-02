@@ -1,1 +1,1 @@
-# channel-streams
+# message-channel-stream
