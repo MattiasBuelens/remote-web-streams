@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
+    "module": "es2015",
     "lib": [
       "dom",
       "es5",
@@ -9,7 +9,7 @@
       "es2015.promise"
     ],
     "rootDir": "src",
-    "outDir": "dist",
+    "outDir": "tmp",
     "strict": true,
     "esModuleInterop": true,
     "importHelpers": true

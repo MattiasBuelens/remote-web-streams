@@ -114,4 +114,6 @@ typings/
 .next
 
 ### Project
+.rpt2_cache/
 dist/
+tmp/
