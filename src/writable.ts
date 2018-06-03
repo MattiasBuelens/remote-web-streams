@@ -13,7 +13,6 @@ export function fromWritablePort<W = any>(port: MessagePort): WritableStream<W> 
 export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
 
   private _controller!: WritableStreamDefaultController;
-  private _backpressure: boolean = true;
 
   private _readyPromise!: Promise<void>;
   private _readyResolve!: () => void;
@@ -40,7 +39,7 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
     // TODO Transfer chunk?
     this._port.postMessage(message);
     // Assume backpressure after every write, until sender pulls
-    this._updateBackpressure(true);
+    this._resetReady();
     // Apply backpressure
     return this._readyPromise;
   }
@@ -65,7 +64,7 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
   private _onMessage(message: ReceiverMessage) {
     switch (message.type) {
       case ReceiverType.PULL:
-        this._updateBackpressure(false);
+        this._resolveReady();
         break;
       case ReceiverType.ERROR:
         this._onError(message.reason);
@@ -77,18 +76,6 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
     this._controller.error(reason);
     this._rejectReady(reason);
     this._port.close();
-  }
-
-  private _updateBackpressure(backpressure: boolean) {
-    if (this._backpressure === backpressure) {
-      return;
-    }
-    if (backpressure) {
-      this._resetReady();
-    } else {
-      this._resolveReady();
-    }
-    this._backpressure = backpressure;
   }
 
   private _resetReady() {

@@ -23,7 +23,10 @@ export class MessagePortSource<R> implements ReadableStreamDefaultUnderlyingSour
   }
 
   pull(controller: ReadableStreamDefaultController<R>) {
-    this._updateBackpressure();
+    const message: ReceiverMessage = {
+      type: ReceiverType.PULL
+    };
+    this._port.postMessage(message);
   }
 
   cancel(reason: any) {
@@ -50,13 +53,6 @@ export class MessagePortSource<R> implements ReadableStreamDefaultUnderlyingSour
         this._port.close();
         break;
     }
-  }
-
-  private _updateBackpressure() {
-    const message: ReceiverMessage = {
-      type: ReceiverType.PULL
-    };
-    this._port.postMessage(message);
   }
 
 }
