@@ -8,10 +8,10 @@
 <body>
 
 <script>
-  const { MessageChannelStream } = ChannelStream;
+  const { ChannelStream } = MessageChannelStream;
 
   const worker = new Worker('./worker.js');
-  const stream = new MessageChannelStream();
+  const stream = new ChannelStream();
   const readable = stream.readable;
   worker.postMessage(stream.writablePort, [stream.writablePort]);
 

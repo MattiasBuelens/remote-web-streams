@@ -1,5 +1,5 @@
 importScripts('../dist/message-channel-stream.js');
-const { fromWritablePort } = ChannelStream;
+const { fromWritablePort } = MessageChannelStream;
 
 onmessage = async (event) => {
   const writable = fromWritablePort(event.data);

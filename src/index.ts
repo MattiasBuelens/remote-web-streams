@@ -1,3 +1,3 @@
-export { MessageChannelStream } from './channel';
+export { ChannelStream } from './channel';
 export { fromReadablePort } from './readable';
 export { fromWritablePort } from './writable';

@@ -3,7 +3,7 @@ import { WritableStream } from './streams/writable-stream';
 import { fromReadablePort } from './readable';
 import { fromWritablePort } from './writable';
 
-export class MessageChannelStream<T> implements ReadableWritableStreamPair<T, T> {
+export class ChannelStream<T> implements ReadableWritableStreamPair<T, T> {
 
   readonly readablePort: MessagePort;
   readonly writablePort: MessagePort;
