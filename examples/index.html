@@ -8,12 +8,11 @@
 <body>
 
 <script>
-  const { ChannelStream } = MessageChannelStream;
+  const { RemoteReadableStream } = MessageChannelStream;
 
   const worker = new Worker('./worker.js');
-  const stream = new ChannelStream();
-  const readable = stream.readable;
-  worker.postMessage(stream.writablePort, [stream.writablePort]);
+  const { readable, writablePort } = new RemoteReadableStream();
+  worker.postMessage(writablePort, [writablePort]);
 
   (async () => {
     const reader = readable.getReader();
