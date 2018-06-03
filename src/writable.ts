@@ -39,8 +39,9 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
     };
     // TODO Transfer chunk?
     this._port.postMessage(message);
-    // Wait for backpressure update from other side
+    // Assume backpressure after every write, until sender sends an update
     this._updateBackpressure(true);
+    // Apply backpressure
     return this._readyPromise;
   }
 
