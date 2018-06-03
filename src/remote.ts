@@ -3,28 +3,28 @@ import { WritableStream } from './streams/writable-stream';
 import { fromReadablePort } from './readable';
 import { fromWritablePort } from './writable';
 
-export class RemoteReadableStream<T = any> {
+export class RemoteReadableStream<R = any> {
 
   readonly writablePort: MessagePort;
-  readonly readable: ReadableStream<T>;
+  readonly readable: ReadableStream<R>;
 
   constructor() {
     const channel = new MessageChannel();
     this.writablePort = channel.port1;
-    this.readable = fromReadablePort<T>(channel.port2);
+    this.readable = fromReadablePort<R>(channel.port2);
   }
 
 }
 
-export class RemoteWritableStream<T = any> {
+export class RemoteWritableStream<W = any> {
 
   readonly readablePort: MessagePort;
-  readonly writable: WritableStream<T>;
+  readonly writable: WritableStream<W>;
 
   constructor() {
     const channel = new MessageChannel();
     this.readablePort = channel.port1;
-    this.writable = fromWritablePort<T>(channel.port2);
+    this.writable = fromWritablePort<W>(channel.port2);
   }
 
 }
