@@ -5,7 +5,7 @@ export const enum SenderType {
 }
 
 export const enum ReceiverType {
-  BACKPRESSURE,
+  PULL,
   ERROR
 }
 
@@ -23,9 +23,8 @@ export interface CloseMessage {
   type: SenderType.CLOSE;
 }
 
-export interface BackpressureMessage {
-  type: ReceiverType.BACKPRESSURE;
-  backpressure: boolean;
+export interface PullMessage {
+  type: ReceiverType.PULL;
 }
 
 export interface ErrorMessage {
@@ -34,4 +33,4 @@ export interface ErrorMessage {
 }
 
 export type SenderMessage = WriteMessage | AbortMessage | CloseMessage;
-export type ReceiverMessage = BackpressureMessage | ErrorMessage;
+export type ReceiverMessage = PullMessage | ErrorMessage;

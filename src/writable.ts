@@ -39,7 +39,7 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
     };
     // TODO Transfer chunk?
     this._port.postMessage(message);
-    // Assume backpressure after every write, until sender sends an update
+    // Assume backpressure after every write, until sender pulls
     this._updateBackpressure(true);
     // Apply backpressure
     return this._readyPromise;
@@ -64,8 +64,8 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
 
   private _onMessage(message: ReceiverMessage) {
     switch (message.type) {
-      case ReceiverType.BACKPRESSURE:
-        this._updateBackpressure(message.backpressure);
+      case ReceiverType.PULL:
+        this._updateBackpressure(false);
         break;
       case ReceiverType.ERROR:
         this._onError(message.reason);

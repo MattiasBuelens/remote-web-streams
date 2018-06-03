@@ -23,7 +23,7 @@ export class MessagePortSource<R> implements ReadableStreamDefaultUnderlyingSour
   }
 
   pull(controller: ReadableStreamDefaultController<R>) {
-    this._updateBackpressure(false);
+    this._updateBackpressure();
   }
 
   cancel(reason: any) {
@@ -38,10 +38,7 @@ export class MessagePortSource<R> implements ReadableStreamDefaultUnderlyingSour
   private _onMessage(message: SenderMessage) {
     switch (message.type) {
       case SenderType.WRITE:
-        // enqueue() will call pull() if needed
-        // - If pull() was called, there is no backpressure. Signal this to the receiver.
-        // - If pull() was not called, there is backpressure. We do not need to signal this,
-        //   since the receiver assumes backpressure by default after every write.
+        // enqueue() will call pull() if needed when there's no backpressure
         this._controller.enqueue(message.chunk);
         break;
       case SenderType.ABORT:
@@ -55,10 +52,9 @@ export class MessagePortSource<R> implements ReadableStreamDefaultUnderlyingSour
     }
   }
 
-  private _updateBackpressure(backpressure: boolean) {
+  private _updateBackpressure() {
     const message: ReceiverMessage = {
-      type: ReceiverType.BACKPRESSURE,
-      backpressure
+      type: ReceiverType.PULL
     };
     this._port.postMessage(message);
   }
