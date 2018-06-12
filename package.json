@@ -7,7 +7,9 @@
   "author": "Mattias Buelens",
   "license": "MIT",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "start": "rollup -c -w",
+    "test": "jest"
   },
   "dependencies": {
     "tslib": "^1.9.2"
