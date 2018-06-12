@@ -2,7 +2,7 @@ import { ReadableStream as ReadableStreamType, ReadableStreamConstructor } from 
 import { WritableStream as WritableStreamType, WritableStreamConstructor } from './writable-stream';
 
 export type NativeReadableStream = ReadableStreamType;
-export const NativeReadableStream: ReadableStreamConstructor = ReadableStream as any;
+export const NativeReadableStream: ReadableStreamConstructor = typeof ReadableStream === 'function' ? ReadableStream as any : undefined;
 
 export type NativeWritableStream = WritableStreamType;
-export const NativeWritableStream: WritableStreamConstructor = WritableStream as any;
+export const NativeWritableStream: WritableStreamConstructor = typeof WritableStream === 'function' ? WritableStream as any : undefined;
