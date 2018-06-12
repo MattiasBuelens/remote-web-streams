@@ -5,5 +5,7 @@ describe('RemoteReadableStream', () => {
   it('constructs', () => {
     const stream = new RemoteReadableStream();
     expect(stream).toBeInstanceOf(RemoteReadableStream);
+    expect(stream.readable).toBeInstanceOf(ReadableStream);
+    expect(stream.writablePort).toBeInstanceOf(MessagePort);
   });
 });
