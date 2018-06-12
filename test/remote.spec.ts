@@ -77,4 +77,19 @@ describe('RemoteReadableStream', () => {
     await expect(read3).resolves.toEqual({ done: true, value: undefined });
     await expect(reader.closed).resolves.toBe(undefined);
   });
+
+  it('cancels readable when writable aborts', async () => {
+    const stream = new RemoteReadableStream();
+    const writable = fromWritablePort(stream.writablePort);
+    const reader = stream.readable.getReader();
+    const writer = writable.getWriter();
+
+    const reason = 'oops';
+    void writer.write('a').catch(() => {});
+    void writer.abort(reason);
+
+    const read1 = reader.read();
+    await expect(read1).rejects.toBe(reason);
+    await expect(reader.closed).rejects.toBe(reason);
+  });
 });
