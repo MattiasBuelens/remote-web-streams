@@ -1,6 +1,5 @@
 import './mocks/dom';
-import { RemoteReadableStream } from '../src/remote';
-import { fromWritablePort } from '../src/writable';
+import { fromWritablePort, RemoteReadableStream } from '../src';
 import { isPending } from './promise-utils';
 
 describe('RemoteReadableStream', () => {
@@ -14,19 +13,19 @@ describe('RemoteReadableStream', () => {
   it('reads chunks from writable port', async () => {
     const stream = new RemoteReadableStream();
     const writable = fromWritablePort(stream.writablePort);
-
     const reader = stream.readable.getReader();
     const writer = writable.getWriter();
-    const r1 = reader.read();
-    const r2 = reader.read();
-    const r3 = reader.read();
+
+    const read1 = reader.read();
+    const read2 = reader.read();
+    const read3 = reader.read();
     void writer.write('a');
     void writer.write('b');
     void writer.write('c');
 
-    await expect(r1).resolves.toEqual({ done: false, value: 'a' });
-    await expect(r2).resolves.toEqual({ done: false, value: 'b' });
-    await expect(r3).resolves.toEqual({ done: false, value: 'c' });
+    await expect(read1).resolves.toEqual({ done: false, value: 'a' });
+    await expect(read2).resolves.toEqual({ done: false, value: 'b' });
+    await expect(read3).resolves.toEqual({ done: false, value: 'c' });
   });
 
   it('respects backpressure', async () => {
