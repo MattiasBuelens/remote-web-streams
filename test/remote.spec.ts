@@ -58,4 +58,23 @@ describe('RemoteReadableStream', () => {
     await expect(isPending(ready2)).resolves.toBe(false);
     await expect(isPending(ready3)).resolves.toBe(false);
   });
+
+  it('propagates close', async () => {
+    const stream = new RemoteReadableStream();
+    const writable = fromWritablePort(stream.writablePort);
+    const reader = stream.readable.getReader();
+    const writer = writable.getWriter();
+
+    writer.write('a');
+    writer.write('b');
+    writer.close();
+
+    const read1 = reader.read();
+    const read2 = reader.read();
+    const read3 = reader.read();
+    await expect(read1).resolves.toEqual({ done: false, value: 'a' });
+    await expect(read2).resolves.toEqual({ done: false, value: 'b' });
+    await expect(read3).resolves.toEqual({ done: true, value: undefined });
+    await expect(reader.closed).resolves.toBe(undefined);
+  });
 });
