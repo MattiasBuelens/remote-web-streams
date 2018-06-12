@@ -51,7 +51,7 @@ describe('RemoteReadableStream', () => {
     await Promise.all([
       expect(read1).resolves.toEqual({ done: false, value: 'a' }),
       expect(write1).resolves.toBe(undefined),
-      expect(isPending(ready1)).resolves.toBe(false),
+      expect(isPending(ready2)).resolves.toBe(true),
       expect(isPending(write2)).resolves.toBe(true),
       expect(isPending(ready3)).resolves.toBe(true)
     ]);
