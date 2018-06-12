@@ -39,24 +39,35 @@ describe('RemoteReadableStream', () => {
     const ready2 = writer.ready;
     const write2 = writer.write('b');
     const ready3 = writer.ready;
-    await expect(isPending(ready1)).resolves.toBe(false);
-    await expect(isPending(write1)).resolves.toBe(true);
-    await expect(isPending(ready2)).resolves.toBe(true);
-    await expect(isPending(write2)).resolves.toBe(true);
-    await expect(isPending(ready3)).resolves.toBe(true);
+    await Promise.all([
+      expect(isPending(ready1)).resolves.toBe(false),
+      expect(isPending(write1)).resolves.toBe(true),
+      expect(isPending(ready2)).resolves.toBe(true),
+      expect(isPending(write2)).resolves.toBe(true),
+      expect(isPending(ready3)).resolves.toBe(true)
+    ]);
 
     const read1 = reader.read();
-    await expect(read1).resolves.toEqual({ done: false, value: 'a' });
-    await expect(write1).resolves.toBe(undefined);
-    await expect(isPending(ready1)).resolves.toBe(false);
-    await expect(isPending(write2)).resolves.toBe(true);
-    await expect(isPending(ready3)).resolves.toBe(true);
+    await Promise.all([
+      expect(read1).resolves.toEqual({ done: false, value: 'a' }),
+      expect(write1).resolves.toBe(undefined),
+      expect(isPending(ready1)).resolves.toBe(false),
+      expect(isPending(write2)).resolves.toBe(true),
+      expect(isPending(ready3)).resolves.toBe(true)
+    ]);
 
     const read2 = reader.read();
-    await expect(read2).resolves.toEqual({ done: false, value: 'b' });
-    await expect(write2).resolves.toBe(undefined);
-    await expect(isPending(ready2)).resolves.toBe(false);
-    await expect(isPending(ready3)).resolves.toBe(false);
+    await Promise.all([
+      expect(read2).resolves.toEqual({ done: false, value: 'b' }),
+      expect(write2).resolves.toBe(undefined),
+      expect(isPending(ready2)).resolves.toBe(true),
+      expect(isPending(ready3)).resolves.toBe(true)
+    ]);
+
+    await Promise.all([
+      expect(isPending(ready2)).resolves.toBe(false),
+      expect(isPending(ready3)).resolves.toBe(false)
+    ]);
   });
 
   it('propagates close', async () => {
