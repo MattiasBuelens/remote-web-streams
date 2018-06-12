@@ -40,7 +40,7 @@ describe('RemoteReadableStream', () => {
     const write2 = writer.write('b');
     const ready3 = writer.ready;
     await Promise.all([
-      expect(isPending(ready1)).resolves.toBe(false),
+      expect(ready1).resolves.toBe(undefined),
       expect(isPending(write1)).resolves.toBe(true),
       expect(isPending(ready2)).resolves.toBe(true),
       expect(isPending(write2)).resolves.toBe(true),
@@ -65,8 +65,8 @@ describe('RemoteReadableStream', () => {
     ]);
 
     await Promise.all([
-      expect(isPending(ready2)).resolves.toBe(false),
-      expect(isPending(ready3)).resolves.toBe(false)
+      expect(ready2).resolves.toBe(undefined),
+      expect(ready3).resolves.toBe(undefined)
     ]);
   });
 
