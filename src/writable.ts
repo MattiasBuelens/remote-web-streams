@@ -5,12 +5,20 @@ import {
 } from './streams/writable-stream';
 import { NativeWritableStream } from './streams/native';
 import { ReceiverMessage, ReceiverType, SenderMessage, SenderType } from './protocol';
+import { Transferable, TransferChunkCallback } from './transfer';
 
-export function fromWritablePort<W = any>(port: MessagePort): WritableStream<W> {
-  return new NativeWritableStream<W>(new MessagePortSink(port));
+export interface MessagePortSinkOptions<W = any> {
+  transferChunk?: TransferChunkCallback<W>;
+}
+
+export function fromWritablePort<W = any>(port: MessagePort,
+                                          options?: MessagePortSinkOptions<W>): WritableStream<W> {
+  return new NativeWritableStream<W>(new MessagePortSink(port, options));
 }
 
 export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
+
+  private readonly _transferChunk?: TransferChunkCallback<W>;
 
   private _controller!: WritableStreamDefaultController;
 
@@ -19,7 +27,8 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
   private _readyReject!: (reason: any) => void;
   private _readyPending!: boolean;
 
-  constructor(private _port: MessagePort) {
+  constructor(private readonly _port: MessagePort, options: MessagePortSinkOptions<W> = {}) {
+    this._transferChunk = options.transferChunk;
     this._resetReady();
     this._port.onmessage = (event) => this._onMessage(event.data);
   }
@@ -36,8 +45,13 @@ export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
       type: SenderType.WRITE,
       chunk
     };
-    // TODO Transfer chunk?
-    this._port.postMessage(message);
+    // Send chunk, optionally transferring its contents
+    let transferList: Transferable[] = this._transferChunk ? this._transferChunk(chunk) : [];
+    if (transferList.length) {
+      this._port.postMessage(message, transferList);
+    } else {
+      this._port.postMessage(message);
+    }
     // Assume backpressure after every write, until sender pulls
     this._resetReady();
     // Apply backpressure
