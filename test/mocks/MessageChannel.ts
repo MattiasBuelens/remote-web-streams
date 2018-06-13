@@ -1,3 +1,5 @@
+import { MockEventTarget } from './EventTarget';
+
 export class MockMessageChannel implements MessageChannel {
   readonly port1: MessagePort;
   readonly port2: MessagePort;
@@ -14,7 +16,7 @@ export class MockMessageChannel implements MessageChannel {
 
 export type MessageEventHandler = (this: MessagePort, ev: MessageEvent) => any;
 
-export class MockMessagePort extends EventTarget implements MessagePort {
+export class MockMessagePort extends MockEventTarget implements MessagePort {
   private _onmessage: MessageEventHandler | null = null;
   private _other: MockMessagePort | undefined = undefined;
   private _queue: any[] = [];
