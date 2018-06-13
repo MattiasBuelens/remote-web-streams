@@ -18,6 +18,8 @@ export type MessageEventHandler = (this: MessagePort, ev: MessageEvent) => any;
 
 export class MockMessagePort extends MockEventTarget implements MessagePort {
   private _onmessage: MessageEventHandler | null = null;
+  private _onmessageListening: boolean = false;
+
   private _other: MockMessagePort | undefined = undefined;
   private _queue: any[] = [];
   private _started: boolean = false;
@@ -53,11 +55,21 @@ export class MockMessagePort extends MockEventTarget implements MessagePort {
 
   set onmessage(handler: MessageEventHandler | null) {
     this._onmessage = handler;
+    if (!this._onmessageListening) {
+      this.addEventListener('message', this._onmessageListener as EventListener);
+      this._onmessageListening = true;
+    }
     // The first time a MessagePort object's onmessage IDL attribute is set,
     // the port's port message queue must be enabled, as if the start() method had been called.
     // https://html.spec.whatwg.org/multipage/web-messaging.html#message-ports:handler-messageport-onmessage-2
     this.start();
   }
+
+  private _onmessageListener = (event: MessageEvent) => {
+    if (this._onmessage) {
+      this._onmessage(event);
+    }
+  };
 
   private _receiveMessage(message: any) {
     if (this._started) {
@@ -74,9 +86,6 @@ export class MockMessagePort extends MockEventTarget implements MessagePort {
   private _dispatchMessageEventSync = (message: any) => {
     const event = new MessageEvent('message', { data: message });
     this.dispatchEvent(event);
-    if (typeof this._onmessage === 'function') {
-      this._onmessage(event);
-    }
   };
 
 }
