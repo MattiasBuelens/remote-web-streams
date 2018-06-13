@@ -32,7 +32,7 @@ export class MockMessagePort extends EventTarget implements MessagePort {
     const queue = this._queue.slice();
     this._queue.length = 0;
     for (let event of queue) {
-      this._dispatchMessageEvent(event);
+      this._dispatchMessageEventAsync(event);
     }
   }
 
@@ -60,17 +60,21 @@ export class MockMessagePort extends EventTarget implements MessagePort {
 
   private _postMessage(event: MessageEvent) {
     if (this._started) {
-      this._dispatchMessageEvent(event);
+      this._dispatchMessageEventAsync(event);
     } else {
       this._queue.push(event);
     }
   }
 
-  private _dispatchMessageEvent(event: MessageEvent) {
-    this.dispatchEvent(event); // TODO async
+  private _dispatchMessageEventAsync(event: MessageEvent) {
+    setTimeout(this._dispatchMessageEventSync, 0, event);
+  }
+
+  private _dispatchMessageEventSync = (event: MessageEvent) => {
+    this.dispatchEvent(event);
     if (typeof this._onmessage === 'function') {
       this._onmessage(event);
     }
-  }
+  };
 
 }
