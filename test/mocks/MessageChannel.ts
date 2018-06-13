@@ -17,7 +17,7 @@ export type MessageEventHandler = (this: MessagePort, ev: MessageEvent) => any;
 export class MockMessagePort extends EventTarget implements MessagePort {
   private _onmessage: MessageEventHandler | null = null;
   private _other: MockMessagePort | undefined = undefined;
-  private _queue: MessageEvent[] = [];
+  private _queue: any[] = [];
   private _started: boolean = false;
 
   _entangle(other: MockMessagePort) {
@@ -31,14 +31,13 @@ export class MockMessagePort extends EventTarget implements MessagePort {
     this._started = true;
     const queue = this._queue.slice();
     this._queue.length = 0;
-    for (let event of queue) {
-      this._dispatchMessageEventAsync(event);
+    for (let message of queue) {
+      this._dispatchMessageEventAsync(message);
     }
   }
 
   postMessage(message?: any, transfer?: any[]): void {
-    const event = new MessageEvent('message', { data: message });
-    this._other!._postMessage(event);
+    this._other!._receiveMessage(message);
   }
 
   close(): void {
@@ -58,19 +57,20 @@ export class MockMessagePort extends EventTarget implements MessagePort {
     this.start();
   }
 
-  private _postMessage(event: MessageEvent) {
+  private _receiveMessage(message: any) {
     if (this._started) {
-      this._dispatchMessageEventAsync(event);
+      this._dispatchMessageEventAsync(message);
     } else {
-      this._queue.push(event);
+      this._queue.push(message);
     }
   }
 
-  private _dispatchMessageEventAsync(event: MessageEvent) {
-    setTimeout(this._dispatchMessageEventSync, 0, event);
+  private _dispatchMessageEventAsync(message: any) {
+    setTimeout(this._dispatchMessageEventSync, 0, message);
   }
 
-  private _dispatchMessageEventSync = (event: MessageEvent) => {
+  private _dispatchMessageEventSync = (message: any) => {
+    const event = new MessageEvent('message', { data: message });
     this.dispatchEvent(event);
     if (typeof this._onmessage === 'function') {
       this._onmessage(event);
