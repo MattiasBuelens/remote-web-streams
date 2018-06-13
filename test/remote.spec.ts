@@ -121,4 +121,21 @@ describe('RemoteReadableStream', () => {
     await expect(reader.closed).resolves.toBe(undefined);
     await expect(writer.closed).rejects.toBe(reason);
   });
+
+  it('uses transferChunk callback', async () => {
+    const transferChunk = jest.fn((chunk: Uint8Array) => [chunk.buffer]);
+
+    const stream = new RemoteReadableStream();
+    const writable = fromWritablePort(stream.writablePort, { transferChunk });
+    const reader = stream.readable.getReader();
+    const writer = writable.getWriter();
+
+    const read1 = reader.read();
+
+    const chunk1 = new Uint8Array([1]);
+    await writer.write(chunk1);
+    expect(transferChunk).toHaveBeenLastCalledWith(chunk1);
+
+    await expect(read1).resolves.toEqual({ done: false, value: chunk1 });
+  });
 });
