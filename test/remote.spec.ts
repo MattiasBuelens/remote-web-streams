@@ -76,9 +76,9 @@ describe('RemoteReadableStream', () => {
     const reader = stream.readable.getReader();
     const writer = writable.getWriter();
 
-    writer.write('a');
-    writer.write('b');
-    writer.close();
+    void writer.write('a');
+    void writer.write('b');
+    void writer.close();
 
     const read1 = reader.read();
     const read2 = reader.read();
