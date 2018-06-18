@@ -17,8 +17,8 @@ export class MockMessageChannel implements MessageChannel {
 export type MessageEventHandler = (this: MessagePort, ev: MessageEvent) => any;
 
 export class MockMessagePort extends MockEventTarget implements MessagePort {
-  private _onmessage: MessageEventHandler | null = null;
-  private _onmessageListening: boolean = false;
+  private _messageHandler: MessageEventHandler | null = null;
+  private _messageHandlerListening: boolean = false;
 
   private _other: MockMessagePort | undefined = undefined;
   private _queue: any[] = [];
@@ -50,14 +50,14 @@ export class MockMessagePort extends MockEventTarget implements MessagePort {
   }
 
   get onmessage(): MessageEventHandler | null {
-    return this._onmessage;
+    return this._messageHandler;
   }
 
   set onmessage(handler: MessageEventHandler | null) {
-    this._onmessage = handler;
-    if (!this._onmessageListening) {
+    this._messageHandler = handler;
+    if (!this._messageHandlerListening) {
       this.addEventListener('message', this._onmessageListener as EventListener);
-      this._onmessageListening = true;
+      this._messageHandlerListening = true;
     }
     // The first time a MessagePort object's onmessage IDL attribute is set,
     // the port's port message queue must be enabled, as if the start() method had been called.
@@ -66,8 +66,8 @@ export class MockMessagePort extends MockEventTarget implements MessagePort {
   }
 
   private _onmessageListener = (event: MessageEvent) => {
-    if (this._onmessage) {
-      this._onmessage(event);
+    if (this._messageHandler) {
+      this._messageHandler(event);
     }
   };
 
