@@ -1,10 +1,4 @@
-import {
-  QueuingStrategy,
-  WritableStream,
-  WritableStreamDefaultController,
-  WritableStreamDefaultWriter,
-  WritableStreamSink
-} from 'whatwg-streams';
+import { QueuingStrategy, WritableStream, WritableStreamSink } from 'whatwg-streams';
 
 export interface WritableStreamConstructor {
   readonly prototype: WritableStream;
@@ -12,11 +6,3 @@ export interface WritableStreamConstructor {
   new<W = any>(underlyingSink?: WritableStreamSink<W>,
                strategy?: QueuingStrategy<W>): WritableStream<W>;
 }
-
-export {
-  QueuingStrategy,
-  WritableStream,
-  WritableStreamDefaultController,
-  WritableStreamDefaultWriter,
-  WritableStreamSink
-};

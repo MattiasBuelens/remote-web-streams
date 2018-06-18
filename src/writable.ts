@@ -1,4 +1,4 @@
-import { WritableStream, WritableStreamDefaultController, WritableStreamSink } from './streams/writable-stream';
+import { WritableStream, WritableStreamDefaultController, WritableStreamSink } from 'whatwg-streams';
 import { NativeWritableStream } from './streams/native';
 import { ReceiverMessage, ReceiverType, SenderMessage, SenderType } from './protocol';
 import { Transferable, TransferChunkCallback } from './transfer';

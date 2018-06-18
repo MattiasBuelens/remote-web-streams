@@ -1,5 +1,4 @@
-import { ReadableStream } from './streams/readable-stream';
-import { WritableStream } from './streams/writable-stream';
+import { ReadableStream, WritableStream } from 'whatwg-streams';
 import { fromReadablePort } from './readable';
 import { fromWritablePort, MessagePortSinkOptions } from './writable';
 

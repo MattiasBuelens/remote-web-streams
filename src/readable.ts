@@ -1,4 +1,4 @@
-import { ReadableStream, ReadableStreamDefaultController, ReadableStreamSource } from './streams/readable-stream';
+import { ReadableStream, ReadableStreamDefaultController, ReadableStreamSource } from 'whatwg-streams';
 import { NativeReadableStream } from './streams/native';
 import { ReceiverMessage, ReceiverType, SenderMessage, SenderType } from './protocol';
 
