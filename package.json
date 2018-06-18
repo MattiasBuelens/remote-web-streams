@@ -12,6 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@types/whatwg-streams": "^0.0.6",
     "tslib": "^1.9.2"
   },
   "devDependencies": {

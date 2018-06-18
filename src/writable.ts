@@ -1,8 +1,4 @@
-import {
-  WritableStream,
-  WritableStreamDefaultController,
-  WritableStreamUnderlyingSink
-} from './streams/writable-stream';
+import { WritableStream, WritableStreamDefaultController, WritableStreamSink } from './streams/writable-stream';
 import { NativeWritableStream } from './streams/native';
 import { ReceiverMessage, ReceiverType, SenderMessage, SenderType } from './protocol';
 import { Transferable, TransferChunkCallback } from './transfer';
@@ -16,7 +12,7 @@ export function fromWritablePort<W = any>(port: MessagePort,
   return new NativeWritableStream<W>(new MessagePortSink(port, options));
 }
 
-export class MessagePortSink<W> implements WritableStreamUnderlyingSink<W> {
+export class MessagePortSink<W> implements WritableStreamSink<W> {
 
   private readonly _transferChunk?: TransferChunkCallback<W>;
 
