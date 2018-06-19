@@ -56,7 +56,7 @@ export class MockMessagePort extends MockEventTarget implements MessagePort {
   set onmessage(handler: MessageEventHandler | null) {
     this._messageHandler = handler;
     if (!this._messageHandlerListening) {
-      this.addEventListener('message', this._messageListener as EventListener);
+      this.addEventListener('message', this._messageListener);
       this._messageHandlerListening = true;
     }
     // The first time a MessagePort object's onmessage IDL attribute is set,
@@ -87,5 +87,18 @@ export class MockMessagePort extends MockEventTarget implements MessagePort {
     const event = new MessageEvent('message', { data: message });
     this.dispatchEvent(event);
   };
+
+}
+
+// Copied from lib.dom.d.ts
+export interface MockMessagePort extends MessagePort {
+
+  addEventListener<K extends keyof MessagePortEventMap>(type: K, listener: (this: MessagePort, ev: MessagePortEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+
+  removeEventListener<K extends keyof MessagePortEventMap>(type: K, listener: (this: MessagePort, ev: MessagePortEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+
+  removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
 
 }
