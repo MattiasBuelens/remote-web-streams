@@ -16,7 +16,7 @@
     "tslib": "^1.9.2"
   },
   "devDependencies": {
-    "@mattiasbuelens/web-streams-polyfill": "0.1.0-alpha.4",
+    "@mattiasbuelens/web-streams-polyfill": "0.1.0-alpha.5",
     "@types/jest": "^23.1.0",
     "jest": "^23.1.0",
     "rollup": "^0.60.7",
