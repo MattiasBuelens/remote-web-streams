@@ -56,7 +56,7 @@ export class MockMessagePort extends MockEventTarget implements MessagePort {
   set onmessage(handler: MessageEventHandler | null) {
     this._messageHandler = handler;
     if (!this._messageHandlerListening) {
-      this.addEventListener('message', this._onmessageListener as EventListener);
+      this.addEventListener('message', this._messageListener as EventListener);
       this._messageHandlerListening = true;
     }
     // The first time a MessagePort object's onmessage IDL attribute is set,
@@ -65,7 +65,7 @@ export class MockMessagePort extends MockEventTarget implements MessagePort {
     this.start();
   }
 
-  private _onmessageListener = (event: MessageEvent) => {
+  private _messageListener = (event: MessageEvent) => {
     if (this._messageHandler) {
       this._messageHandler(event);
     }
