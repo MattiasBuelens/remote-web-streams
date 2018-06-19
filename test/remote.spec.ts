@@ -9,6 +9,7 @@ import {
 import { isPending } from './promise-utils';
 import { NativeReadableStream, NativeWritableStream } from '../src/streams/native';
 import { ReadableStreamDefaultReader, WritableStreamDefaultWriter } from 'whatwg-streams';
+import { TransformStream } from '@mattiasbuelens/web-streams-polyfill';
 
 describe('RemoteReadableStream', () => {
 
@@ -48,11 +49,30 @@ describe('RemoteWritableStream', () => {
 
 });
 
+// Should behave like a no-op TransformStream
+describe('TransformStream (reference)', () => {
+
+  tests(<T>(options: RemoteWritableStreamOptions<T> = {}) => {
+    const stream = new TransformStream<T, T>({
+      transform(chunk, controller) {
+        if (options.transferChunk) {
+          options.transferChunk(chunk);
+        }
+        controller.enqueue(chunk);
+      }
+    });
+    const reader = stream.readable.getReader();
+    const writer = stream.writable.getWriter();
+    return [reader, writer];
+  });
+
+});
+
 type SetupFn = <T>(options?: RemoteWritableStreamOptions<T>) => [ReadableStreamDefaultReader<T>, WritableStreamDefaultWriter<T>];
 
 function tests(setup: SetupFn) {
 
-  it('reads chunks from writable port', async () => {
+  it('reads chunks from writable', async () => {
     const [reader, writer] = setup<string>();
 
     const read1 = reader.read();
