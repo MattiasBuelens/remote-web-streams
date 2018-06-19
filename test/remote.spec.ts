@@ -12,13 +12,19 @@ describe('RemoteReadableStream', () => {
     expect(stream.writablePort).toBeInstanceOf(MessagePort);
   });
 
-  function setup<T>(options?: RemoteWritableStreamOptions<T>): [ReadableStreamDefaultReader<T>, WritableStreamDefaultWriter<T>] {
+  tests(<T>(options?: RemoteWritableStreamOptions<T>) => {
     const stream = new RemoteReadableStream<T>();
     const writable = fromWritablePort<T>(stream.writablePort, options);
     const reader = stream.readable.getReader();
     const writer = writable.getWriter();
     return [reader, writer];
-  }
+  });
+
+});
+
+type SetupFn = <T>(options?: RemoteWritableStreamOptions<T>) => [ReadableStreamDefaultReader<T>, WritableStreamDefaultWriter<T>];
+
+function tests(setup: SetupFn) {
 
   it('reads chunks from writable port', async () => {
     const [reader, writer] = setup<string>();
@@ -129,4 +135,5 @@ describe('RemoteReadableStream', () => {
 
     await expect(read1).resolves.toEqual({ done: false, value: chunk1 });
   });
-});
+
+}
