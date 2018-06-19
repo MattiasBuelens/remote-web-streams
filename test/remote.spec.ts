@@ -4,6 +4,7 @@ import { isPending } from './promise-utils';
 import { ReadableStreamDefaultReader, WritableStreamDefaultWriter } from 'whatwg-streams';
 
 describe('RemoteReadableStream', () => {
+
   it('constructs', () => {
     const stream = new RemoteReadableStream();
     expect(stream).toBeInstanceOf(RemoteReadableStream);
@@ -22,6 +23,7 @@ describe('RemoteReadableStream', () => {
 });
 
 describe('RemoteWritableStream', () => {
+
   it('constructs', () => {
     const stream = new RemoteWritableStream();
     expect(stream).toBeInstanceOf(RemoteWritableStream);
