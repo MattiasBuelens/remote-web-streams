@@ -1,8 +1,7 @@
 import './mocks/dom';
-import { fromReadablePort, fromWritablePort, RemoteReadableStream, RemoteWritableStream } from '../src';
+import { fromReadablePort, fromWritablePort, RemoteReadableStream, RemoteWritableStream, RemoteWritableStreamOptions } from '../src';
 import { isPending } from './promise-utils';
 import { ReadableStreamDefaultReader, WritableStreamDefaultWriter } from 'whatwg-streams';
-import { RemoteWritableStreamOptions } from '../src/remote';
 
 describe('RemoteReadableStream', () => {
   it('constructs', () => {

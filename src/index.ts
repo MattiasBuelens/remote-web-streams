@@ -1,3 +1,3 @@
-export { RemoteReadableStream, RemoteWritableStream } from './remote';
+export { RemoteReadableStream, RemoteWritableStream, RemoteWritableStreamOptions } from './remote';
 export { fromReadablePort } from './readable';
 export { fromWritablePort } from './writable';
