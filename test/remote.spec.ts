@@ -1,6 +1,8 @@
 import './mocks/dom';
 import { fromWritablePort, RemoteReadableStream } from '../src';
 import { isPending } from './promise-utils';
+import { ReadableStreamDefaultReader, WritableStreamDefaultWriter } from 'whatwg-streams';
+import { RemoteWritableStreamOptions } from '../src/remote';
 
 describe('RemoteReadableStream', () => {
   it('constructs', () => {
@@ -10,11 +12,16 @@ describe('RemoteReadableStream', () => {
     expect(stream.writablePort).toBeInstanceOf(MessagePort);
   });
 
-  it('reads chunks from writable port', async () => {
-    const stream = new RemoteReadableStream();
-    const writable = fromWritablePort(stream.writablePort);
+  function setup<T>(options?: RemoteWritableStreamOptions<T>): [ReadableStreamDefaultReader<T>, WritableStreamDefaultWriter<T>] {
+    const stream = new RemoteReadableStream<T>();
+    const writable = fromWritablePort<T>(stream.writablePort, options);
     const reader = stream.readable.getReader();
     const writer = writable.getWriter();
+    return [reader, writer];
+  }
+
+  it('reads chunks from writable port', async () => {
+    const [reader, writer] = setup<string>();
 
     const read1 = reader.read();
     const read2 = reader.read();
@@ -29,10 +36,7 @@ describe('RemoteReadableStream', () => {
   });
 
   it('respects backpressure', async () => {
-    const stream = new RemoteReadableStream();
-    const writable = fromWritablePort(stream.writablePort);
-    const reader = stream.readable.getReader();
-    const writer = writable.getWriter();
+    const [reader, writer] = setup<string>();
 
     const ready1 = writer.ready;
     const write1 = writer.write('a');
@@ -71,10 +75,7 @@ describe('RemoteReadableStream', () => {
   });
 
   it('propagates close', async () => {
-    const stream = new RemoteReadableStream();
-    const writable = fromWritablePort(stream.writablePort);
-    const reader = stream.readable.getReader();
-    const writer = writable.getWriter();
+    const [reader, writer] = setup<string>();
 
     void writer.write('a');
     void writer.write('b');
@@ -90,10 +91,7 @@ describe('RemoteReadableStream', () => {
   });
 
   it('cancels readable when writable aborts', async () => {
-    const stream = new RemoteReadableStream();
-    const writable = fromWritablePort(stream.writablePort);
-    const reader = stream.readable.getReader();
-    const writer = writable.getWriter();
+    const [reader, writer] = setup<string>();
 
     const reason = 'oops';
     void writer.write('a').catch(() => {});
@@ -106,10 +104,7 @@ describe('RemoteReadableStream', () => {
   });
 
   it('aborts writable when readable cancels', async () => {
-    const stream = new RemoteReadableStream();
-    const writable = fromWritablePort(stream.writablePort);
-    const reader = stream.readable.getReader();
-    const writer = writable.getWriter();
+    const [reader, writer] = setup<string>();
 
     const reason = 'never mind';
     const read1 = reader.read();
@@ -124,11 +119,7 @@ describe('RemoteReadableStream', () => {
 
   it('uses transferChunk callback', async () => {
     const transferChunk = jest.fn((chunk: Uint8Array) => [chunk.buffer]);
-
-    const stream = new RemoteReadableStream();
-    const writable = fromWritablePort(stream.writablePort, { transferChunk });
-    const reader = stream.readable.getReader();
-    const writer = writable.getWriter();
+    const [reader, writer] = setup<Uint8Array>({ transferChunk });
 
     const read1 = reader.read();
 
