@@ -101,6 +101,48 @@ self.onmessage = async (event) => {
 };
 ```
 
+If you want, you can use two pairs of streams to first send the input from the main thread to the worker,
+and then receive the output from the worker on the main thread
+```js
+// main.js
+(async () => {
+  const worker = new Worker('./worker.js');
+  // create a stream to send the input to the worker
+  const input = new RemoteWritableStream();
+  // create a stream to receive the output from the worker
+  const output = new RemoteReadableStream();
+  // transfer the other ends to the worker
+  worker.postMessage([input.readablePort, output.writablePort], [input.readablePort, output.writablePort]);
+
+  const response = await fetch('./some-data.txt');
+  const readable = response.body;
+  // send the downloaded data to the worker
+  readable.pipeTo(input.writable).catch(() => {});
+  // receive results from the worker as they come in
+  await output.readable.pipeTo(new WritableStream({
+    write(chunk) {
+      const results = document.getElementById('results');
+      results.appendChild(document.createTextNode(chunk)); // tadaa!
+    }
+  }));
+})();
+
+// worker.js
+self.onmessage = async (event) => {
+  // create the input and output streams from the transferred ports
+  const [readablePort, writablePort] = event.data;
+  const readable = fromReadablePort(readablePort);
+  const writable = fromWritablePort(writablePort);
+
+  // process data
+  await readable.pipeThrough(new TransformStream({
+    transform(chunk, controller) {
+      controller.enqueue(process(chunk)); // do the actual work
+    }
+  })).pipeTo(writable); // send the results back to main thread
+};
+```
+
 [streams-spec]: https://streams.spec.whatwg.org/
 [fetch-spec]: https://fetch.spec.whatwg.org/
 [identity-transform-stream]: https://streams.spec.whatwg.org/#identity-transform-stream
