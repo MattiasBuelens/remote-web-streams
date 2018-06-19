@@ -1,5 +1,5 @@
 import './mocks/dom';
-import { fromWritablePort, RemoteReadableStream } from '../src';
+import { fromReadablePort, fromWritablePort, RemoteReadableStream, RemoteWritableStream } from '../src';
 import { isPending } from './promise-utils';
 import { ReadableStreamDefaultReader, WritableStreamDefaultWriter } from 'whatwg-streams';
 import { RemoteWritableStreamOptions } from '../src/remote';
@@ -17,6 +17,24 @@ describe('RemoteReadableStream', () => {
     const writable = fromWritablePort<T>(stream.writablePort, options);
     const reader = stream.readable.getReader();
     const writer = writable.getWriter();
+    return [reader, writer];
+  });
+
+});
+
+describe('RemoteWritableStream', () => {
+  it('constructs', () => {
+    const stream = new RemoteWritableStream();
+    expect(stream).toBeInstanceOf(RemoteWritableStream);
+    expect(stream.writable).toBeInstanceOf(WritableStream);
+    expect(stream.readablePort).toBeInstanceOf(MessagePort);
+  });
+
+  tests(<T>(options?: RemoteWritableStreamOptions<T>) => {
+    const stream = new RemoteWritableStream<T>(options);
+    const readable = fromReadablePort<T>(stream.readablePort);
+    const reader = readable.getReader();
+    const writer = stream.writable.getWriter();
     return [reader, writer];
   });
 
