@@ -39,17 +39,18 @@ and finally displaying the results as they come in.
 // main.js
 (async () => {
   const response = await fetch('./some-data.txt');
-  const readable = response.body;
-  await readable.pipeThrough(new TransformStream({
-    transform(chunk, controller) {
-      controller.enqueue(process(chunk)); // do the actual work
-    }
-  })).pipeTo(new WritableStream({
-    write(chunk) {
-      const results = document.getElementById('results');
-      results.appendChild(document.createTextNode(chunk)); // tadaa!
-    }
-  }));
+  await response.body
+    .pipeThrough(new TransformStream({
+      transform(chunk, controller) {
+        controller.enqueue(process(chunk)); // do the actual work
+      }
+    }))
+    .pipeTo(new WritableStream({
+      write(chunk) {
+        const results = document.getElementById('results');
+        results.appendChild(document.createTextNode(chunk)); // tadaa!
+      }
+    }));
 })();
 ```
 
