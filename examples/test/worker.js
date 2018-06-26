@@ -1,4 +1,4 @@
-importScripts('../dist/message-channel-stream.js');
+importScripts('../../dist/message-channel-stream.js');
 const { fromWritablePort } = MessageChannelStream;
 
 onmessage = async (event) => {
