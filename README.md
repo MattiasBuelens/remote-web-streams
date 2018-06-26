@@ -61,7 +61,9 @@ Can we get the best of both worlds: **process data as it comes in, but off the m
 Enter: `message-channel-stream`. With this, you can create a pair of a `WritableStream` and a `ReadableStream` which
 behaves like an [identity transform stream][identity-transform-stream], but where you can send one of the two ends
 to a different context.
-For example, your main thread can read from a `ReadableStream`, and let a worker write into the `WritableStream`.
+
+For example, your main thread can create a `RemoteReadableStream` and transfer the writable end to a worker.
+The worker can write chunks into its `WritableStream`, and have the main thread read them from its `ReadableStream`.
 
 ```js
 // main.js
