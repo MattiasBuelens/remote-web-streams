@@ -69,14 +69,13 @@ Similarly, the readable end sends a message to the writable end whenever it need
 can release any backpressure.
 
 You can also send multiple streams to the worker. This is especially useful to run a `TransformStream` inside a worker.
-In the previous example, we can create a `RemoteReadableStream` and a `RemoteWritableStream` on the main thread,
-transfer those to the worker and make the worker connect those streams with a `TransformStream`. The main thread
-sends and receives all data, but the actual processing happens inside the worker. Magic!
+To fix the last example from the problem statement, we can create a `RemoteReadableStream` and a `RemoteWritableStream`
+on the main thread, transfer those to the worker and make the worker connect those streams with a `TransformStream`.
+The main thread sends and receives all data, but the actual processing happens inside the worker. _Magic!_
 
-If you want, you can use two pairs of streams to first send the input from the main thread to the worker,
-and then receive the output from the worker on the main thread
 ```js
 // main.js
+const { RemoteReadableStream, RemoteWritableStream } = MessageChannelStream;
 (async () => {
   const worker = new Worker('./worker.js');
   // create a stream to send the input to the worker
@@ -101,6 +100,7 @@ and then receive the output from the worker on the main thread
 })();
 
 // worker.js
+const { fromReadablePort, fromWritablePort } = MessageChannelStream;
 self.onmessage = async (event) => {
   // create the input and output streams from the transferred ports
   const [readablePort, writablePort] = event.data;
