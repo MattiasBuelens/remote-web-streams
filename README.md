@@ -67,39 +67,10 @@ a message to the readable end whenever a new chunk is written, so the readable e
 Similarly, the readable end sends a message to the writable end whenever it needs more data, so the writable end
 can release any backpressure.
 
-In the previous example, you could make the worker fetch and process the data, and then receive the processed results
-on the main thread:
-
-```js
-// main.js
-const worker = new Worker('./worker.js');
-const { readable, writablePort } = new RemoteReadableStream();
-// transfer the writable end to the worker
-worker.postMessage(writablePort, [writablePort]);
-// show the results as they come in
-readable.pipeTo(new WritableStream({
-  write(chunk) {
-    const results = document.getElementById('results');
-    results.appendChild(document.createTextNode(chunk)); // tadaa!
-  }
-}));
-
-// worker.js
-self.onmessage = async (event) => {
-  // create the writable end of the transferred port
-  const writablePort = event.data;
-  const writable = fromWritablePort(writablePort);
-
-  // download and process data
-  const response = await fetch('./some-data.txt');
-  const readable = response.body;
-  await readable.pipeThrough(new TransformStream({
-    transform(chunk, controller) {
-      controller.enqueue(process(chunk)); // do the actual work
-    }
-  })).pipeTo(writable); // send the results back to main thread
-};
-```
+You can also send multiple streams to the worker. This is especially useful to run a `TransformStream` inside a worker.
+In the previous example, we can create a `RemoteReadableStream` and a `RemoteWritableStream` on the main thread,
+transfer those to the worker and make the worker connect those streams with a `TransformStream`. The main thread
+sends and receives all data, but the actual processing happens inside the worker. Magic!
 
 If you want, you can use two pairs of streams to first send the input from the main thread to the worker,
 and then receive the output from the worker on the main thread
@@ -108,23 +79,24 @@ and then receive the output from the worker on the main thread
 (async () => {
   const worker = new Worker('./worker.js');
   // create a stream to send the input to the worker
-  const input = new RemoteWritableStream();
+  const {writable, readablePort} = new RemoteWritableStream();
   // create a stream to receive the output from the worker
-  const output = new RemoteReadableStream();
+  const {readable, writablePort} = new RemoteReadableStream();
   // transfer the other ends to the worker
-  worker.postMessage([input.readablePort, output.writablePort], [input.readablePort, output.writablePort]);
+  worker.postMessage([readablePort, writablePort], [readablePort, writablePort]);
 
   const response = await fetch('./some-data.txt');
-  const readable = response.body;
-  // send the downloaded data to the worker
-  readable.pipeTo(input.writable).catch(() => {});
-  // receive results from the worker as they come in
-  await output.readable.pipeTo(new WritableStream({
-    write(chunk) {
-      const results = document.getElementById('results');
-      results.appendChild(document.createTextNode(chunk)); // tadaa!
-    }
-  }));
+  await response.body
+    // send the downloaded data to the worker
+    // and receive the results back
+    .pipeThrough({readable, writable})
+    // show the results as they come in
+    .pipeTo(new WritableStream({
+      write(chunk) {
+        const results = document.getElementById('results');
+        results.appendChild(document.createTextNode(chunk)); // tadaa!
+      }
+    }));
 })();
 
 // worker.js
@@ -135,11 +107,13 @@ self.onmessage = async (event) => {
   const writable = fromWritablePort(writablePort);
 
   // process data
-  await readable.pipeThrough(new TransformStream({
-    transform(chunk, controller) {
-      controller.enqueue(process(chunk)); // do the actual work
-    }
-  })).pipeTo(writable); // send the results back to main thread
+  await readable
+    .pipeThrough(new TransformStream({
+      transform(chunk, controller) {
+        controller.enqueue(process(chunk)); // do the actual work
+      }
+    }))
+    .pipeTo(writable); // send the results back to main thread
 };
 ```
 
