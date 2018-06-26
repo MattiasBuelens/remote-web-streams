@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing an array inside a web worker</title>
+    <link rel="stylesheet" href="./resources/jank-meter.css">
+    <script src="./utils.js"></script>
+</head>
+<body>
+
+<p>
+    This example processes an array of inputs using a web worker.
+    The page remains responsive because the processing happens in a separate thread.
+    However, the page only shows the results after <em>the entire array</em> has been processed.
+</p>
+
+<div id="jank-meter">JANK METER</div>
+
+<button id="run">Run</button>
+<pre id="log"></pre>
+
+<script>
+  const results = document.getElementById('log');
+  const worker = new Worker('./worker-array.js');
+
+  document.getElementById('run').onclick = () => {
+    const input = [];
+    for (let i = 0; i < 5; i++) {
+      input.push(Math.random());
+    }
+
+    worker.postMessage(input);
+  };
+
+  worker.onmessage = (event) => {
+    const output = event.data;
+    printArrayToElement(results, output);
+  };
+</script>
+
+</body>
+</html>

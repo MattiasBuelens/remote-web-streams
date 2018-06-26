@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing an stream inside a web worker</title>
+    <link rel="stylesheet" href="./resources/jank-meter.css">
+    <script src="./utils.js"></script>
+    <script src="../dist/message-channel-stream.js"></script>
+</head>
+<body>
+
+<p>
+    This example processes an stream of inputs using a <code>TransformStream</code> inside a web worker.
+    It uses <code>RemoteReadableStream</code> and <code>RemoteWritableStream</code> to pipe data to and from the
+    worker, allowing the page to show the results as they are being received.
+    and remains responsive because the processing happens in a separate thread.
+</p>
+
+<div id="jank-meter">JANK METER</div>
+
+<button id="run">Run</button>
+<pre id="log"></pre>
+
+<script>
+  const { RemoteReadableStream, RemoteWritableStream } = MessageChannelStream;
+
+  const results = document.getElementById('log');
+  const worker = new Worker('./worker-stream.js');
+
+  document.getElementById('run').onclick = () => {
+    const input = [];
+    for (let i = 0; i < 5; i++) {
+      input.push(Math.random());
+    }
+
+    // create a pair of remote readable and writable streams
+    const { readable, writablePort } = new RemoteReadableStream();
+    const { writable, readablePort } = new RemoteWritableStream();
+    // transfer them to the worker
+    worker.postMessage([readablePort, writablePort], [readablePort, writablePort]);
+
+    const inputStream = arrayToStream(input);
+    inputStream
+      .pipeThrough({ readable, writable })
+      .pipeTo(printToElementStream(results));
+  };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing an array inside a web page script</title>
+    <link rel="stylesheet" href="./resources/jank-meter.css">
+    <script src="./utils.js"></script>
+    <script src="./process.js"></script>
+</head>
+<body>
+
+<p>
+    This example processes an array of inputs inside a page script.
+    The page only shows the results after <em>the entire array</em> has been processed,
+    and the page becomes unresponsive while processing since everything runs on the main thread.
+</p>
+
+<div id="jank-meter">JANK METER</div>
+
+<button id="run">Run</button>
+<pre id="log"></pre>
+
+<script>
+  const results = document.getElementById('log');
+
+  document.getElementById('run').onclick = () => {
+    const input = [];
+    for (let i = 0; i < 5; i++) {
+      input.push(Math.random());
+    }
+    const output = processArray(input);
+    printArrayToElement(results, output);
+  };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing an stream inside a web page script</title>
+    <link rel="stylesheet" href="./resources/jank-meter.css">
+    <script src="./utils.js"></script>
+    <script src="./process.js"></script>
+</head>
+<body>
+
+<p>
+    This example processes an stream of inputs using a <code>TransformStream</code> inside a page script.
+    The page becomes unresponsive while processing since everything runs on the main thread.
+    This also prevents the page from showing the results as they are being received.
+</p>
+
+<div id="jank-meter">JANK METER</div>
+
+<button id="run">Run</button>
+<pre id="log"></pre>
+
+<script>
+  const results = document.getElementById('log');
+
+  document.getElementById('run').onclick = () => {
+    const input = [];
+    for (let i = 0; i < 5; i++) {
+      input.push(Math.random());
+    }
+
+    const inputStream = arrayToStream(input);
+    inputStream
+      .pipeThrough(processTransform())
+      .pipeTo(printToElementStream(results));
+  };
+</script>
+
+</body>
+</html>
