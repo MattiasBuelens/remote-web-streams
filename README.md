@@ -63,6 +63,40 @@ behaves like an [identity transform stream][identity-transform-stream], but wher
 to a different context.
 For example, your main thread can read from a `ReadableStream`, and let a worker write into the `WritableStream`.
 
+```js
+// main.js
+const { RemoteReadableStream } = MessageChannelStream;
+(async () => {
+  const worker = new Worker('./worker.js');
+  // create a stream to receive the data from the worker
+  const {readable, writablePort} = new RemoteReadableStream();
+  // transfer the writable end to the worker
+  worker.postMessage(writablePort, [writablePort]);
+
+  // receive data from worker
+  await readable
+    .pipeTo(new WritableStream({
+      write(chunk) {
+        console.log(chunk);
+      }
+    }));
+})();
+
+// worker.js
+const { fromWritablePort } = MessageChannelStream;
+self.onmessage = (event) => {
+  // create the writable streams from the transferred port
+  const writablePort = event.data;
+  const writable = fromWritablePort(writablePort);
+
+  // send data back to the main thread
+  const writer = writable.getWriter();
+  writer.write('foo');
+  writer.write('bar');
+  writer.close();
+};
+```
+
 It works by creating a `MessageChannel` between the `WritableStream` and the `ReadableStream`. The writable end sends
 a message to the readable end whenever a new chunk is written, so the readable end can enqueue it for reading.
 Similarly, the readable end sends a message to the writable end whenever it needs more data, so the writable end
