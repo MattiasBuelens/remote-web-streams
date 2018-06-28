@@ -11,8 +11,10 @@
 
 <p>
     This example processes an stream of inputs using a <code>TransformStream</code> inside a page script.
-    The page becomes unresponsive while processing since everything runs on the main thread.
-    This also prevents the page from showing the results as they are being received.
+    A small delay is added between each chunk using <code>setTimeout</code>, such that the page can be repainted
+    after receiving a result.
+    However, the page is still unresponsive while processing each chunk, since all processing happens on the main
+    thread.
 </p>
 
 <div id="jank-meter">JANK METER</div>
@@ -31,6 +33,7 @@
 
     const inputStream = arrayToStream(input);
     inputStream
+      .pipeThrough(delayTransform(1))
       .pipeThrough(processTransform())
       .pipeTo(printToElementStream(results));
   };

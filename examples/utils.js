@@ -8,6 +8,18 @@ function arrayToStream(array) {
   return readable;
 }
 
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function delayTransform(ms) {
+  return new TransformStream({
+    transform(chunk, controller) {
+      return delay(ms).then(() => controller.enqueue(chunk));
+    }
+  });
+}
+
 function printArrayToElement(element, array) {
   element.appendChild(document.createTextNode(array.join('\n') + '\n\n'));
 }
