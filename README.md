@@ -79,8 +79,8 @@ const { readable, writablePort } = new RemoteWebStreams.RemoteReadableStream();
    using `fromWritablePort`.
 ```js
 // main.js
-const myWorker = new Worker('./worker.js');
-myWorker.postMessage({ writablePort }, [writablePort]);
+const worker = new Worker('./worker.js');
+worker.postMessage({ writablePort }, [writablePort]);
 
 // worker.js
 self.onmessage = (event) => {
@@ -115,7 +115,7 @@ This is the complement to `RemoteReadableStream`:
 ```js
 // main.js
 const { writable, readablePort } = new RemoteWebStreams.RemoteWritableStream();
-myWorker.postMessage({ readablePort }, [readablePort]);
+worker.postMessage({ readablePort }, [readablePort]);
 const writer = writable.getWriter();
 // ...
 
