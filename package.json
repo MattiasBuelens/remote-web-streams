@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "description": "",
   "main": "dist/remote-web-streams.js",
+  "types": "dist/types/index.d.ts",
   "keywords": [],
   "author": "Mattias Buelens",
   "license": "MIT",
   "scripts": {
-    "build": "rollup -c",
+    "build": "npm run build:bundle && npm run build:types",
+    "build:bundle": "rollup -c",
+    "build:types": "tsc --project ./tsconfig.json --emitDeclarationOnly --declaration --declarationDir ./dist/types",
     "start": "rollup -c -w",
     "test": "jest"
   },
