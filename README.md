@@ -206,5 +206,4 @@ Similarly, the readable end sends a message to the writable end whenever it need
 so the writable end can release any backpressure.
 
 [streams-spec]: https://streams.spec.whatwg.org/
-[fetch-spec]: https://fetch.spec.whatwg.org/
 [identity-transform-stream]: https://streams.spec.whatwg.org/#identity-transform-stream
