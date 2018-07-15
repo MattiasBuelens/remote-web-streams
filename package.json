@@ -2,7 +2,8 @@
   "name": "remote-web-streams",
   "version": "0.1.0",
   "description": "Web streams that work across web workers and iframes.",
-  "main": "dist/remote-web-streams.js",
+  "main": "dist/remote-web-streams",
+  "module": "dist/remote-web-streams.mjs",
   "types": "dist/types/index.d.ts",
   "keywords": [
     "remote",
