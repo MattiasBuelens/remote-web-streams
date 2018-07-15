@@ -58,56 +58,92 @@ Now you can see the first results as they come in, but your processing is blocki
 Can we get the best of both worlds: **process data as it comes in, but off the main thread**?
 
 ## Solution
-Enter: `remote-web-streams`. With this, you can create a pair of a `WritableStream` and a `ReadableStream` which
-behaves like an [identity transform stream][identity-transform-stream], but where you can send one of the two ends
-to a different context.
+Enter: `remote-web-streams`. With this libray, you can create pairs of readable and writable streams
+where you can write chunks to a writable stream inside one context, and read those chunks from a readable stream
+**inside a different context**.
+Functionally, such a pair behaves just like an [identity transform stream][identity-transform-stream], and you can
+use and compose them just like any other stream.
 
-For example, your main thread can create a `RemoteReadableStream` and transfer the writable end to a worker.
-The worker can write chunks into its `WritableStream`, and have the main thread read them from its `ReadableStream`.
+## Basic setup
 
+### RemoteReadableStream
+The basic steps for setting up a pair of linked streams are:
+1. Construct a `RemoteReadableStream`. This returns two objects:
+   * a `MessagePort` which must be used to construct the linked `WritableStream` inside the other context
+   * a `ReadableStream` which will read chunks written by the linked `WritableStream`
 ```js
 // main.js
-const { RemoteReadableStream } = RemoteWebStreams;
-(async () => {
-  const worker = new Worker('./worker.js');
-  // create a stream to receive the data from the worker
-  const {readable, writablePort} = new RemoteReadableStream();
-  // transfer the writable end to the worker
-  worker.postMessage(writablePort, [writablePort]);
-
-  // receive data from worker
-  await readable
-    .pipeTo(new WritableStream({
-      write(chunk) {
-        console.log(chunk);
-      }
-    }));
-})();
+const { readable, writablePort } = new RemoteWebStreams.RemoteReadableStream();
+```
+2. Transfer the `writablePort` to the other context, and instantiate the linked `WritableStream` in that context
+   using `fromWritablePort`.
+```js
+// main.js
+const myWorker = new Worker('./worker.js');
+myWorker.postMessage({ writablePort }, [writablePort]);
 
 // worker.js
-const { fromWritablePort } = RemoteWebStreams;
 self.onmessage = (event) => {
-  // create the writable streams from the transferred port
-  const writablePort = event.data;
-  const writable = fromWritablePort(writablePort);
+  const { writablePort } = event.data;
+  const writable = RemoteWebStreams.fromWritablePort(writablePort);
+}
+```
+3. Use the streams as usual! Whenever you write something to the `writable` inside one context,
+   the `readable` in the other context will receive it.
+```js
+// worker.js
+const writer = writable.getWriter();
+writer.write('hello');
+writer.write('world');
+writer.close();
 
-  // send data back to the main thread
-  const writer = writable.getWriter();
-  writer.write('foo');
-  writer.write('bar');
-  writer.close();
-};
+// main.js
+(async () => {
+  const reader = readable.getReader();
+  console.log(await reader.read()); // { done: false, value: 'hello' }
+  console.log(await reader.read()); // { done: false, value: 'world' }
+  console.log(await reader.read()); // { done: true, value: undefined }
+})();
 ```
 
-It works by creating a `MessageChannel` between the `WritableStream` and the `ReadableStream`. The writable end sends
-a message to the readable end whenever a new chunk is written, so the readable end can enqueue it for reading.
-Similarly, the readable end sends a message to the writable end whenever it needs more data, so the writable end
-can release any backpressure.
+### RemoteWritableStream
+You can also create a `RemoteWritableStream`.
+This works very similar to a `RemoteReadableStream`, except you get the `WritableStream` in the original context,
+and you construct the `ReadableStream` in the other context with `fromReadablePort`.
+```js
+// main.js
+const { writable, readablePort } = new RemoteWebStreams.RemoteWritableStream();
+myWorker.postMessage({ readablePort }, [readablePort]);
+const writer = writable.getWriter();
+// ...
 
-You can also send multiple streams to the worker. This is especially useful to run a `TransformStream` inside a worker.
-To fix the last example from the problem statement, we can create a `RemoteReadableStream` and a `RemoteWritableStream`
-on the main thread, transfer those to the worker and make the worker connect those streams with a `TransformStream`.
-The main thread sends and receives all data, but the actual processing happens inside the worker. _Magic!_
+// worker.js
+self.onmessage = (event) => {
+  const { readablePort } = event.data;
+  const writable = RemoteWebStreams.fromReadablePort(readablePort);
+  const reader = readable.getReader();
+  // ...
+}
+```
+
+## Use cases
+
+### Remote transform stream
+In the basic setup, we create one pair of streams and transfer one end to the worker.
+However, it's also possible to set up multiple pairs and transfer them all to a worker.
+
+This opens up interesting possibilities. We can use a `RemoteWritableStream` to write chunks to a worker,
+let the worker transform them using one or more `TransformStream`s, and then read those transformed chunks
+back on the main thread using a `RemoteReadableStream`.
+This allows us to move one or more CPU-intensive `TransformStream`s off the main thread,
+and turn them into a "remote transform stream".
+
+To demonstrate these "remote transform streams", we set one up to solve the original problem statement:
+1. Create a `RemoteReadableStream` and a `RemoteWritableStream` on the main thread.
+2. Transfer both streams to the worker. Inside the worker, connect the `readable` to the `writable` by piping it
+   through one or more `TransformStream`s.
+3. On the main thread, write data to be transformed into the `writable` and read transformed data from the `readable`.
+   Pro-tip: we can use `.pipeThrough({ readable, writable })` for this!
 
 ```js
 // main.js
@@ -115,17 +151,17 @@ const { RemoteReadableStream, RemoteWritableStream } = RemoteWebStreams;
 (async () => {
   const worker = new Worker('./worker.js');
   // create a stream to send the input to the worker
-  const {writable, readablePort} = new RemoteWritableStream();
+  const { writable, readablePort } = new RemoteWritableStream();
   // create a stream to receive the output from the worker
-  const {readable, writablePort} = new RemoteReadableStream();
+  const { readable, writablePort } = new RemoteReadableStream();
   // transfer the other ends to the worker
-  worker.postMessage([readablePort, writablePort], [readablePort, writablePort]);
+  worker.postMessage({ readablePort, writablePort }, [readablePort, writablePort]);
 
   const response = await fetch('./some-data.txt');
   await response.body
     // send the downloaded data to the worker
     // and receive the results back
-    .pipeThrough({readable, writable})
+    .pipeThrough({ readable, writable })
     // show the results as they come in
     .pipeTo(new WritableStream({
       write(chunk) {
@@ -139,7 +175,7 @@ const { RemoteReadableStream, RemoteWritableStream } = RemoteWebStreams;
 const { fromReadablePort, fromWritablePort } = RemoteWebStreams;
 self.onmessage = async (event) => {
   // create the input and output streams from the transferred ports
-  const [readablePort, writablePort] = event.data;
+  const { readablePort, writablePort } = event.data;
   const readable = fromReadablePort(readablePort);
   const writable = fromWritablePort(writablePort);
 
@@ -153,6 +189,19 @@ self.onmessage = async (event) => {
     .pipeTo(writable); // send the results back to main thread
 };
 ```
+With this set up, we achieve the desired goals:
+* Data is transformed as soon as it arrives on the main thread.
+* Transformed data is displayed on the web page as soon as it is transformed by the worker.
+* All of the data processing happens inside the worker, so it never blocks the main thread.
+
+The results are shown as fast as possible, and your web page stays snappy. Great success! 🎉
+
+## Behind the scenes
+The library works its magic by creating a `MessageChannel` between the `WritableStream` and the `ReadableStream`.
+The writable end sends a message to the readable end whenever a new chunk is written,
+so the readable end can enqueue it for reading.
+Similarly, the readable end sends a message to the writable end whenever it needs more data,
+so the writable end can release any backpressure.
 
 [streams-spec]: https://streams.spec.whatwg.org/
 [fetch-spec]: https://fetch.spec.whatwg.org/
