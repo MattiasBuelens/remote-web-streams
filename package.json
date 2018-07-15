@@ -1,10 +1,17 @@
 {
   "name": "remote-web-streams",
   "version": "0.1.0",
-  "description": "",
+  "description": "Web streams that work across web workers and iframes.",
   "main": "dist/remote-web-streams.js",
   "types": "dist/types/index.d.ts",
-  "keywords": [],
+  "keywords": [
+    "remote",
+    "web",
+    "streams",
+    "readablestream",
+    "whatwg",
+    "worker"
+  ],
   "author": "Mattias Buelens",
   "license": "MIT",
   "files": [
