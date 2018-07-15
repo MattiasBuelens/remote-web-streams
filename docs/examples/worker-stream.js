@@ -1,5 +1,5 @@
 importScripts('./process.js');
-importScripts('../../dist/remote-web-streams.js');
+importScripts('https://unpkg.com/remote-web-streams@0.1.0/dist/remote-web-streams.js');
 const { fromReadablePort, fromWritablePort } = RemoteWebStreams;
 
 onmessage = (event) => {
