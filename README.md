@@ -108,8 +108,10 @@ writer.close();
 
 ### RemoteWritableStream
 You can also create a `RemoteWritableStream`.
-This works very similar to a `RemoteReadableStream`, except you get the `WritableStream` in the original context,
-and you construct the `ReadableStream` in the other context with `fromReadablePort`.
+This is the complement to `RemoteReadableStream`:
+* The constructor (in the original context) returns a `WritableStream` (instead of a readable one).
+* You transfer the `readablePort` to the other context,
+  and instantiate the linked `ReadableStream` with `fromReadablePort` inside that context.
 ```js
 // main.js
 const { writable, readablePort } = new RemoteWebStreams.RemoteWritableStream();
@@ -126,7 +128,7 @@ self.onmessage = (event) => {
 }
 ```
 
-## Use cases
+## Examples
 
 ### Remote transform stream
 In the basic setup, we create one pair of streams and transfer one end to the worker.
