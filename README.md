@@ -1,4 +1,4 @@
-# message-channel-stream
+# remote-web-streams
 [Web streams][streams-spec] that work across web workers and `<iframe>`s.
 
 ## Problem
@@ -58,7 +58,7 @@ Now you can see the first results as they come in, but your processing is blocki
 Can we get the best of both worlds: **process data as it comes in, but off the main thread**?
 
 ## Solution
-Enter: `message-channel-stream`. With this, you can create a pair of a `WritableStream` and a `ReadableStream` which
+Enter: `remote-web-streams`. With this, you can create a pair of a `WritableStream` and a `ReadableStream` which
 behaves like an [identity transform stream][identity-transform-stream], but where you can send one of the two ends
 to a different context.
 
@@ -67,7 +67,7 @@ The worker can write chunks into its `WritableStream`, and have the main thread 
 
 ```js
 // main.js
-const { RemoteReadableStream } = MessageChannelStream;
+const { RemoteReadableStream } = RemoteWebStreams;
 (async () => {
   const worker = new Worker('./worker.js');
   // create a stream to receive the data from the worker
@@ -85,7 +85,7 @@ const { RemoteReadableStream } = MessageChannelStream;
 })();
 
 // worker.js
-const { fromWritablePort } = MessageChannelStream;
+const { fromWritablePort } = RemoteWebStreams;
 self.onmessage = (event) => {
   // create the writable streams from the transferred port
   const writablePort = event.data;
@@ -111,7 +111,7 @@ The main thread sends and receives all data, but the actual processing happens i
 
 ```js
 // main.js
-const { RemoteReadableStream, RemoteWritableStream } = MessageChannelStream;
+const { RemoteReadableStream, RemoteWritableStream } = RemoteWebStreams;
 (async () => {
   const worker = new Worker('./worker.js');
   // create a stream to send the input to the worker
@@ -136,7 +136,7 @@ const { RemoteReadableStream, RemoteWritableStream } = MessageChannelStream;
 })();
 
 // worker.js
-const { fromReadablePort, fromWritablePort } = MessageChannelStream;
+const { fromReadablePort, fromWritablePort } = RemoteWebStreams;
 self.onmessage = async (event) => {
   // create the input and output streams from the transferred ports
   const [readablePort, writablePort] = event.data;

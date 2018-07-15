@@ -1,8 +1,8 @@
 {
-  "name": "message-channel-stream",
+  "name": "remote-web-streams",
   "version": "0.1.0",
   "description": "",
-  "main": "dist/message-channel-stream.js",
+  "main": "dist/remote-web-streams.js",
   "keywords": [],
   "author": "Mattias Buelens",
   "license": "MIT",

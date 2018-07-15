@@ -1,5 +1,5 @@
-importScripts('../../dist/message-channel-stream.js');
-const { fromWritablePort } = MessageChannelStream;
+importScripts('../../dist/remote-web-streams.js');
+const { fromWritablePort } = RemoteWebStreams;
 
 onmessage = async (event) => {
   const writable = fromWritablePort(event.data);

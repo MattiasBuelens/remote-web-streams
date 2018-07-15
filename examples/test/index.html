@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Message channel stream example</title>
-    <script src="../../dist/message-channel-stream.js"></script>
+    <title>Remote web stream example</title>
+    <script src="../../dist/remote-web-streams.js"></script>
 </head>
 <body>
 
 <script>
-  const { RemoteReadableStream } = MessageChannelStream;
+  const { RemoteReadableStream } = RemoteWebStreams;
 
   const worker = new Worker('./worker.js');
   const { readable, writablePort } = new RemoteReadableStream();
