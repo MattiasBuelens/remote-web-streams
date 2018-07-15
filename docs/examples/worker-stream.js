@@ -1,5 +1,5 @@
 importScripts('./process.js');
-importScripts('../dist/remote-web-streams.js');
+importScripts('../../dist/remote-web-streams.js');
 const { fromReadablePort, fromWritablePort } = RemoteWebStreams;
 
 onmessage = (event) => {
