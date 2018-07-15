@@ -7,10 +7,14 @@
   "keywords": [],
   "author": "Mattias Buelens",
   "license": "MIT",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "build": "npm run build:bundle && npm run build:types",
     "build:bundle": "rollup -c",
     "build:types": "tsc --project ./tsconfig.json --emitDeclarationOnly --declaration --declarationDir ./dist/types",
+    "prepare": "npm run build && npm test",
     "start": "rollup -c -w",
     "test": "jest"
   },
