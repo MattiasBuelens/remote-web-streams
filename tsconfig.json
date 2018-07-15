@@ -11,9 +11,7 @@
     ],
     "rootDir": "src",
     "outDir": "tmp",
-    "strict": true,
-    "esModuleInterop": true,
-    "importHelpers": true
+    "strict": true
   },
   "include": [
     "src/**/*.ts"
