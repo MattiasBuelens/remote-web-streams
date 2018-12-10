@@ -1,6 +1,6 @@
 function doSomeWork(value) {
   let sum = value;
-  for (let i = 0; i < 1e7; i++) {
+  for (let i = 0; i < 1e6; i++) {
     sum += Math.random();
     sum -= Math.random();
   }
