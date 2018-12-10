@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Processing an stream inside a web worker with native transferable streams</title>
+    <link rel="stylesheet" href="./resources/jank-meter.css">
+    <script src="./utils.js"></script>
+</head>
+<body>
+
+<p>
+    This example processes an stream of inputs using a <code>TransformStream</code> inside a web worker.
+    It uses transferable <code>ReadableStream</code> and <code>WritableStream</code> to pipe data to and from the
+    worker, allowing the page to show the results as they are being received
+    and remain responsive because the processing happens in a separate thread.
+</p>
+
+<p>
+    This demo requires the browser to support transferable streams. At the time of writing, transferable streams are
+    available in Chrome Canary 73 with the &quot;experimental Web platform features&quot; flag enabled.
+    Go to <code>chrome://flags/#enable-experimental-web-platform-features</code> to enabled/disable this flag.
+</p>
+
+<div id="jank-meter">JANK METER</div>
+
+<button id="run">Run</button>
+<pre id="log"></pre>
+
+<script>
+  const results = document.getElementById('log');
+  const worker = new Worker('./worker-stream-transferable.js');
+
+  document.getElementById('run').onclick = () => {
+    const input = [];
+    for (let i = 0; i < 5; i++) {
+      input.push(Math.random());
+    }
+
+    // create the input and output streams
+    const readable = arrayToStream(input);
+    const writable = printToElementStream(results);
+
+    // transfer them to the worker
+    worker.postMessage([readable, writable], [readable, writable]);
+  };
+</script>
+
+</body>
+</html>
