@@ -27,11 +27,11 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@types/jest": "^23.1.0",
-    "jest": "^23.1.0",
-    "rollup": "^0.60.7",
-    "rollup-plugin-typescript2": "^0.15.0",
-    "ts-jest": "^22.4.6",
+    "@types/jest": "^24.0.11",
+    "jest": "^24.3.1",
+    "rollup": "^1.6.0",
+    "rollup-plugin-typescript2": "^0.19.3",
+    "ts-jest": "^24.0.0",
     "typescript": "^3.3.3",
     "web-streams-polyfill": "^2.0.0"
   },
