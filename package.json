@@ -19,9 +19,8 @@
     "dist/"
   ],
   "scripts": {
-    "build": "npm run build:bundle && npm run build:types",
+    "build": "npm run build:bundle",
     "build:bundle": "rollup -c",
-    "build:types": "tsc --project ./tsconfig.json --emitDeclarationOnly --declaration --declarationDir ./dist/types",
     "prepare": "npm run build && npm test",
     "start": "rollup -c -w",
     "test": "jest"
@@ -30,8 +29,9 @@
     "@types/jest": "^24.0.11",
     "jest": "^24.3.1",
     "rollup": "^1.6.0",
-    "rollup-plugin-typescript2": "^0.19.3",
+    "rollup-plugin-dts": "^0.13.0",
     "ts-jest": "^24.0.0",
+    "tslib": "^1.9.3",
     "typescript": "^3.3.3",
     "web-streams-polyfill": "^2.0.0"
   },

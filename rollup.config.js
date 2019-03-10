@@ -1,6 +1,6 @@
-const typescript = require('rollup-plugin-typescript2');
+const { ts, dts } = require('rollup-plugin-dts');
 
-module.exports = {
+module.exports = [{
   input: './src/index.ts',
   output: [{
     file: './dist/remote-web-streams.js',
@@ -11,6 +11,19 @@ module.exports = {
     format: 'es'
   }],
   plugins: [
-    typescript()
+    ts({
+      tsconfig: './tsconfig.json'
+    })
   ]
-};
+}, {
+  input: './src/index.ts',
+  output: [{
+    file: './dist/types/index.d.ts',
+    format: 'es'
+  }],
+  plugins: [
+    dts({
+      tsconfig: './tsconfig.json'
+    })
+  ]
+}];
