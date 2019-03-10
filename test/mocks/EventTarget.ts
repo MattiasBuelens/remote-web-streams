@@ -20,8 +20,8 @@ export class MockEventTarget implements EventTarget {
   }
 
   removeEventListener(type: string,
-                      listener?: EventListenerOrEventListenerObject | null,
-                      options?: EventListenerOptions | boolean): void {
+                      listener: EventListenerOrEventListenerObject | null,
+                      options?: boolean | EventListenerOptions): void {
     this._delegateEventTarget.removeEventListener(type, listener, options);
   }
 
