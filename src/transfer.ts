@@ -1,6 +1,3 @@
-// https://developer.mozilla.org/en-US/docs/Web/API/Transferable
-export type Transferable = ArrayBuffer | MessagePort | ImageBitmap;
-
 /**
  * Returns which parts of a chunk should be transferred to the remote end.
  *

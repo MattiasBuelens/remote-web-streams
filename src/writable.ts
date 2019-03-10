@@ -1,7 +1,6 @@
-import { WritableStream, WritableStreamDefaultController, WritableStreamSink } from 'whatwg-streams';
 import { NativeWritableStream } from './streams/native';
 import { ReceiverMessage, ReceiverType, SenderMessage, SenderType } from './protocol';
-import { Transferable, TransferChunkCallback } from './transfer';
+import { TransferChunkCallback } from './transfer';
 
 export interface MessagePortSinkOptions<W = any> {
   transferChunk?: TransferChunkCallback<W>;
@@ -12,7 +11,7 @@ export function fromWritablePort<W = any>(port: MessagePort,
   return new NativeWritableStream<W>(new MessagePortSink(port, options));
 }
 
-export class MessagePortSink<W> implements WritableStreamSink<W> {
+export class MessagePortSink<W> implements UnderlyingSink<W> {
 
   private readonly _transferChunk?: TransferChunkCallback<W>;
 

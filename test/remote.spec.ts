@@ -8,7 +8,6 @@ import {
 } from '../src';
 import { isPending } from './promise-utils';
 import { NativeReadableStream, NativeWritableStream } from '../src/streams/native';
-import { ReadableStreamDefaultReader, WritableStreamDefaultWriter } from 'whatwg-streams';
 import { TransformStream } from '@mattiasbuelens/web-streams-polyfill';
 
 describe('RemoteReadableStream', () => {

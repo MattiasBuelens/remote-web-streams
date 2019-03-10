@@ -1,4 +1,3 @@
-import { ReadableStream, ReadableStreamDefaultController, ReadableStreamSource } from 'whatwg-streams';
 import { NativeReadableStream } from './streams/native';
 import { ReceiverMessage, ReceiverType, SenderMessage, SenderType } from './protocol';
 
@@ -6,7 +5,7 @@ export function fromReadablePort<R = any>(port: MessagePort): ReadableStream<R> 
   return new NativeReadableStream<R>(new MessagePortSource(port));
 }
 
-export class MessagePortSource<R> implements ReadableStreamSource<R> {
+export class MessagePortSource<R> implements UnderlyingSource<R> {
 
   private _controller!: ReadableStreamDefaultController<R>;
 

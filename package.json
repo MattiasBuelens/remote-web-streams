@@ -26,9 +26,6 @@
     "start": "rollup -c -w",
     "test": "jest"
   },
-  "dependencies": {
-    "@types/whatwg-streams": "^0.0.6"
-  },
   "devDependencies": {
     "@mattiasbuelens/web-streams-polyfill": "0.1.0-alpha.5",
     "@types/jest": "^23.1.0",
@@ -36,7 +33,7 @@
     "rollup": "^0.60.7",
     "rollup-plugin-typescript2": "^0.15.0",
     "ts-jest": "^22.4.6",
-    "typescript": "^2.9.2"
+    "typescript": "^3.3.3"
   },
   "jest": {
     "transform": {
