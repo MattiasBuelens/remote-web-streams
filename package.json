@@ -19,8 +19,9 @@
     "dist/"
   ],
   "scripts": {
-    "build": "npm run build:bundle",
+    "build": "npm run check:types && npm run build:bundle",
     "build:bundle": "rollup -c",
+    "check:types": "tsc --project ./tsconfig.json --noEmit",
     "prepare": "npm run build && npm test",
     "start": "rollup -c -w",
     "test": "jest"
