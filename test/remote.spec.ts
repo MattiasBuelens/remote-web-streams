@@ -8,7 +8,7 @@ import {
 } from '../src';
 import { isPending } from './promise-utils';
 import { NativeReadableStream, NativeWritableStream } from '../src/streams/native';
-import { TransformStream } from '@mattiasbuelens/web-streams-polyfill';
+import { TransformStream } from 'web-streams-polyfill';
 
 describe('RemoteReadableStream', () => {
 

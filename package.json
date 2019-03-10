@@ -27,13 +27,13 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@mattiasbuelens/web-streams-polyfill": "0.1.0-alpha.5",
     "@types/jest": "^23.1.0",
     "jest": "^23.1.0",
     "rollup": "^0.60.7",
     "rollup-plugin-typescript2": "^0.15.0",
     "ts-jest": "^22.4.6",
-    "typescript": "^3.3.3"
+    "typescript": "^3.3.3",
+    "web-streams-polyfill": "^2.0.0"
   },
   "jest": {
     "transform": {

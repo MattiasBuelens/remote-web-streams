@@ -1,4 +1,4 @@
-import { ReadableStream, WritableStream } from '@mattiasbuelens/web-streams-polyfill';
+import { ReadableStream, WritableStream } from 'web-streams-polyfill';
 import { MockMessageChannel, MockMessagePort } from './MessageChannel';
 
 declare global {
