@@ -37,9 +37,7 @@
     "web-streams-polyfill": "^2.0.0"
   },
   "jest": {
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
+    "preset": "ts-jest",
     "testRegex": "(\\.|/)(test|spec)\\.(js?|ts?)$",
     "moduleFileExtensions": [
       "ts",
@@ -49,7 +47,7 @@
     ],
     "globals": {
       "ts-jest": {
-        "tsConfigFile": "./tsconfig.test.json"
+        "tsConfig": "./tsconfig.test.json"
       }
     }
   }
