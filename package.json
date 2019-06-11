@@ -27,14 +27,14 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.11",
-    "jest": "^24.3.1",
-    "rollup": "^1.6.0",
-    "rollup-plugin-dts": "^0.13.0",
-    "ts-jest": "^24.0.0",
-    "tslib": "^1.9.3",
-    "typescript": "^3.3.3",
-    "web-streams-polyfill": "^2.0.0"
+    "@types/jest": "^24.0.13",
+    "jest": "^24.8.0",
+    "rollup": "^1.15.1",
+    "rollup-plugin-dts": "^0.15.1",
+    "ts-jest": "^24.0.2",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.1",
+    "web-streams-polyfill": "^2.0.3"
   },
   "jest": {
     "preset": "ts-jest",
