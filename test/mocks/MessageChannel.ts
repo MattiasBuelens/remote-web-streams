@@ -40,7 +40,7 @@ export class MockMessagePort extends MockEventTarget implements MessagePort {
     }
   }
 
-  postMessage(message?: any, transfer?: any[]): void {
+  postMessage(message: any): void {
     this._other!._receiveMessage(message);
   }
 
