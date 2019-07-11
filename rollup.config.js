@@ -1,7 +1,7 @@
-const { dts } = require('rollup-plugin-dts');
-const typescript = require('rollup-plugin-typescript2');
+import dts from 'rollup-plugin-dts';
+import typescript from 'rollup-plugin-typescript2';
 
-module.exports = [{
+export default [{
   input: './src/index.ts',
   output: [{
     file: './dist/remote-web-streams.js',
