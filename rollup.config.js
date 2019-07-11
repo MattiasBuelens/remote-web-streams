@@ -1,4 +1,5 @@
-const { ts, dts } = require('rollup-plugin-dts');
+const { dts } = require('rollup-plugin-dts');
+const typescript = require('rollup-plugin-typescript2');
 
 module.exports = [{
   input: './src/index.ts',
@@ -11,7 +12,7 @@ module.exports = [{
     format: 'es'
   }],
   plugins: [
-    ts({
+    typescript({
       tsconfig: './tsconfig.json'
     })
   ]
