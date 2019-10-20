@@ -1,10 +1,10 @@
-export const enum SenderType {
+export enum SenderType {
   WRITE,
   ABORT,
   CLOSE
 }
 
-export const enum ReceiverType {
+export enum ReceiverType {
   PULL,
   ERROR
 }
