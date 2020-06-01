@@ -1,4 +1,5 @@
 import './mocks/dom';
+import { describe, expect, it, jest } from '@jest/globals';
 import {
   fromReadablePort,
   fromWritablePort,
