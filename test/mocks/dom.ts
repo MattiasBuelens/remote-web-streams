@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-self.ReadableStream = ReadableStream;
-self.WritableStream = WritableStream;
+self.ReadableStream = ReadableStream as any;
+self.WritableStream = WritableStream as any;
 self.MessageChannel = MockMessageChannel;
 self.MessagePort = MockMessagePort;

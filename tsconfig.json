@@ -10,8 +10,6 @@
       "es2015.iterable",
       "es2015.promise"
     ],
-    "rootDir": "src",
-    "outDir": "tmp",
     "strict": true
   },
   "include": [
